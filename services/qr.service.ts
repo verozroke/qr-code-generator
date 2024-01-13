@@ -1,18 +1,18 @@
 import axios from "axios"
 
 export type LinkResponse = {
-  url: string
+  qr_url: string
 }
 
 export const qrService = {
   async createQR(body: FormData): Promise<LinkResponse> {
-    // const { data } = await axios.post<LinkResponse>('localhost:4000/qr', body, {
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data'
-    //   }
-    // })
-
+    const config = useRuntimeConfig()
+    const { data } = await axios.post<LinkResponse>(`${config.public.backendBase}/api/v1/evac/address/`, body, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     // return data
-    return { url: 'https://shikimori.me/' }
+    return data
   }
 }

@@ -6,23 +6,58 @@
         <span class="text-oxford text-3xl font-bold tracking-tight leading-normal">iSec QR Код Генератор</span>
         <span class="text-slate-600 mb-5 text-base font-medium tracking-tight leading-normal">Введите адрес и изображение
           эвакуации в формате PDF, чтобы получить для него QR-код.</span>
-        <v-form ref="QRform" @submit="e => onSubmit(e)" class="flex form flex-col gap-2">
-          <v-file-input accept="application/pdf" v-model="file" color="#FA126C" :rules="pdfRules" :show-size="1000"
-            label="План эвакуации" variant="outlined"></v-file-input>
-          <v-text-field v-model="address" variant="outlined" prepend-icon="mdi-map-marker-outline" :rules="addressRules"
-            color="#FA126C" label="Адрес здания и этаж"
-            placeholder="Пример: г. Астана, Қалдаякова 56, 1 этаж"></v-text-field>
+        <v-form
+          ref="QRform"
+          @submit="e => onSubmit(e)"
+          class="flex form flex-col gap-2"
+        >
+          <v-file-input
+            accept="application/pdf"
+            v-model="file"
+            color="#FA126C"
+            :rules="pdfRules"
+            :show-size="1000"
+            label="План эвакуации"
+            variant="outlined"
+          ></v-file-input>
+          <v-text-field
+            v-model="address"
+            variant="outlined"
+            prepend-icon="mdi-map-marker-outline"
+            :rules="addressRules"
+            color="#FA126C"
+            label="Адрес здания и этаж"
+            placeholder="Пример: г. Астана, Қалдаякова 56, 1 этаж"
+          ></v-text-field>
           <div class="flex gap-2 w-full justify-end">
-            <v-btn type="submit" size="large" class="w-fit px-5" color="#FA126C"
-              style="text-transform: none; letter-spacing: .7px;" prepend-icon="mdi-qrcode-plus">Сгенерировать QR
+            <v-btn
+              type="submit"
+              size="large"
+              class="w-fit px-5"
+              color="#FA126C"
+              style="text-transform: none; letter-spacing: .7px;"
+              prepend-icon="mdi-qrcode-plus"
+            >Сгенерировать QR
               код</v-btn>
-            <v-btn v-if="!!currentQR" @click="() => downloadQR()" size="large" class="w-fit px-5" color="#28B0A6"
-              style="text-transform: none; letter-spacing: .7px;" prepend-icon="mdi-download">Скачать</v-btn>
+            <v-btn
+              v-if="!!currentQR"
+              @click="() => downloadQR()"
+              size="large"
+              class="w-fit px-5"
+              color="#28B0A6"
+              style="text-transform: none; letter-spacing: .7px;"
+              prepend-icon="mdi-download"
+            >Скачать</v-btn>
           </div>
         </v-form>
-        <div v-if="!!currentQR" class="bg-slate-500 mt-7 mb-4 h-[1px] w-full rounded-full"></div>
-        <div v-if="!!currentQR"
-          class="text-oxford w-full text-center text-3xl font-bold tracking-wide leading-normal mb-2">
+        <div
+          v-if="!!currentQR"
+          class="bg-slate-500 mt-7 mb-4 h-[1px] w-full rounded-full"
+        ></div>
+        <div
+          v-if="!!currentQR"
+          class="text-oxford w-full text-center text-3xl font-bold tracking-wide leading-normal mb-2"
+        >
           Ваш QR:</div>
         <div class="flex w-full justify-center">
           <div class="image-container max-w-xs max-h-xs">
@@ -60,7 +95,6 @@ const addressRules = ref([
 
 const downloadQR = () => {
   const link = document.createElement('a')
-
   link.setAttribute('href', currentQR.value)
   link.download = 'iSec QR Code' + new Date(Date.now()).toDateString()
   link.click()
@@ -72,13 +106,12 @@ const onSubmit = async (e: SubmitEventPromise) => {
     isLoading.value = true
 
     const form = new FormData()
-    form.append('location', address.value)
-    form.append('evacuation_plan', file.value![0])
-
-    const { url } = await qrService.createQR(form)
+    form.append('address', address.value)
+    form.append('file_path', file.value![0])
+    const { qr_url } = await qrService.createQR(form)
 
     const img = document.createElement('img')
-    currentQR.value = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${url}`
+    currentQR.value = qr_url
     img.src = currentQR.value
     img.className = 'w-full h-full object-cover mx-auto'
 

@@ -9,6 +9,11 @@ export default defineNuxtConfig({
       ['defineStore', 'definePiniaStore'], // import { defineStore as definePiniaStore } from 'pinia'
     ],
   },
+  runtimeConfig: {
+    public: {
+      backendBase: '', // can be overridden by NUXT_PUBLIC_API_BASE environment variable
+    }
+  },
   modules: [
     '@pinia/nuxt',
   ],
